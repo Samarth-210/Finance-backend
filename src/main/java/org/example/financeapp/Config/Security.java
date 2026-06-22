@@ -1,7 +1,6 @@
 package org.example.financeapp.Config;
 
 import org.example.financeapp.JwtFilter.JwtFilter;
-import org.example.financeapp.Repositories.UserRepository;
 import org.example.financeapp.Services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +29,7 @@ public class Security {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configure(http))
+                .cors(cors -> {}) // ✅ Fixed: This correctly integrates WebMvcConfigurer CORS settings into Spring Security
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -40,7 +39,6 @@ public class Security {
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-
     }
 
     @Bean
@@ -67,12 +65,12 @@ public class Security {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173","https://*.vercel.app")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
+
+                        .allowedOrigins("http://localhost:5173", "https://finance-frontend-7t61.vercel.app")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };
     }
 }
-
